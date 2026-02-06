@@ -1,6 +1,4 @@
 import java.util.*;
-import java.util.Queue;
-import java.util.ArrayDeque;
 
 class Node {
     int data;
@@ -15,12 +13,11 @@ class Node {
 class BST {
     Node root;
 
-    // BST insertion
+    // Insert
     Node insert(Node root, int data) {
         if (root == null) {
             return new Node(data);
         }
-
         if (data < root.data) {
             root.left = insert(root.left, data);
         } else if (data > root.data) {
@@ -29,6 +26,7 @@ class BST {
         return root;
     }
 
+    // Traversals
     void inorder(Node root) {
         if (root != null) {
             inorder(root.left);
@@ -53,22 +51,17 @@ class BST {
         }
     }
 
+    // Search
     boolean search(Node root, int key) {
         if (root == null) return false;
-
         if (key == root.data) return true;
-        else if (key < root.data) return search(root.left, key);
-        else return search(root.right, key);
+        if (key < root.data) return search(root.left, key);
+        return search(root.right, key);
     }
 
-//    void deleteNode(Node root,int key){
-//        if (root == null) System.out.println("Tree is Empty");
-//        Node ptr = root;
-//
-//    }
-
-    void mirrorImage(Node root){
-        if (root != null){
+    // Mirror
+    void mirrorImage(Node root) {
+        if (root != null) {
             Node temp = root.left;
             root.left = root.right;
             root.right = temp;
@@ -77,66 +70,114 @@ class BST {
         }
     }
 
-    Node copy(Node root){
-        if (root == null){
-            return null;
-        }
+    // Copy
+    Node copy(Node root) {
+        if (root == null) return null;
         Node temp = new Node(root.data);
         temp.left = copy(root.left);
         temp.right = copy(root.right);
         return temp;
     }
 
-    void displayParentWithChildren(Node root){
-        if(root == null ) return;
-        if(root.left != null || root.right != null){
-            System.out.println("Parent = " + root.data);
-            if(root.left != null){
-                System.out.println("Left Child = " + root.left.data);
-            } else {
-                System.out.println("Left Child = null");
-            }
+    // Display parent with children
+    void displayParentWithChildren(Node root) {
+        if (root == null) return;
 
-            if(root.right != null){
-                System.out.println("Right Child = " + root.right.data);
-            } else {
-                System.out.println("Right Child = null");
-            }
+        if (root.left != null || root.right != null) {
+            System.out.println("Parent = " + root.data);
+            System.out.println("Left Child = " + 
+                (root.left != null ? root.left.data : "null"));
+            System.out.println("Right Child = " + 
+                (root.right != null ? root.right.data : "null"));
         }
+
         displayParentWithChildren(root.left);
         displayParentWithChildren(root.right);
     }
 
-    void displayLeafNodes(Node root){
+    // Display leaf nodes
+    void displayLeafNodes(Node root) {
         if (root == null) return;
-        if(root.left == null && root.right == null){
+        if (root.left == null && root.right == null) {
             System.out.println(root.data);
         }
         displayLeafNodes(root.left);
         displayLeafNodes(root.right);
     }
 
-    void levelOrderDisplay(Node root){
+    // Level order traversal
+    void levelOrderDisplay(Node root) {
         if (root == null) return;
+
+        Queue<Node> queue = new ArrayDeque<>();
         queue.add(root);
 
-        while(!queue.isEmpty()){
+        while (!queue.isEmpty()) {
             Node temp = queue.poll();
-            System.out.println(temp.data);
-            if(temp.left != null){
-                queue.add(root.left);
-            }
-            if(temp.right != null){
-                queue.add(root.right);
-            }
+            System.out.print(temp.data + " ");
+
+            if (temp.left != null) queue.add(temp.left);
+            if (temp.right != null) queue.add(temp.right);
         }
+        System.out.println();
+    }
+
+    // Delete node
+    Node deleteNode(Node root, int key) {
+        if (root == null) {
+            System.out.println("Tree is Empty");
+            return null;
+        }
+
+        Node ptr = root;
+        Node parent = null;
+
+        while (ptr != null && ptr.data != key) {
+            parent = ptr;
+            if (key < ptr.data) ptr = ptr.left;
+            else ptr = ptr.right;
+        }
+
+        if (ptr == null) {
+            System.out.println("Key Not Found");
+            return root;
+        }
+
+        // Case 1 & 2: 0 or 1 child
+        if (ptr.left == null || ptr.right == null) {
+            Node child = (ptr.left != null) ? ptr.left : ptr.right;
+
+            if (parent == null) return child;
+
+            if (parent.left == ptr) parent.left = child;
+            else parent.right = child;
+
+            return root;
+        }
+
+        // Case 3: 2 children
+        Node successorParent = ptr;
+        Node successor = ptr.right;
+
+        while (successor.left != null) {
+            successorParent = successor;
+            successor = successor.left;
+        }
+
+        ptr.data = successor.data;
+
+        if (successorParent.left == successor)
+            successorParent.left = successor.right;
+        else
+            successorParent.right = successor.right;
+
+        return root;
     }
 }
 
 public class bst {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        Queue<Node> queue = new ArrayDeque<>();
         BST tree = new BST();
         int choice, value;
 
@@ -151,6 +192,8 @@ public class bst {
             System.out.println("7. Copy Tree");
             System.out.println("8. Display Parent With Child");
             System.out.println("9. Display Leaf Node");
+            System.out.println("10. Level wise Display");
+            System.out.println("11. Delete Node");
             System.out.println("0. Exit");
             System.out.print("Enter choice: ");
             choice = sc.nextInt();
@@ -163,19 +206,16 @@ public class bst {
                     break;
 
                 case 2:
-                    System.out.print("Inorder: ");
                     tree.inorder(tree.root);
                     System.out.println();
                     break;
 
                 case 3:
-                    System.out.print("Preorder: ");
                     tree.preorder(tree.root);
                     System.out.println();
                     break;
 
                 case 4:
-                    System.out.print("Postorder: ");
                     tree.postorder(tree.root);
                     System.out.println();
                     break;
@@ -183,42 +223,44 @@ public class bst {
                 case 5:
                     System.out.print("Enter key to search: ");
                     value = sc.nextInt();
-                    if (tree.search(tree.root, value))
-                        System.out.println("Key found");
-                    else
-                        System.out.println("Key not found");
+                    System.out.println(tree.search(tree.root, value)
+                            ? "Key Found" : "Key Not Found");
                     break;
 
                 case 6:
-                    System.out.println("Mirroring...");
                     tree.mirrorImage(tree.root);
+                    System.out.println("Tree Mirrored");
                     break;
 
                 case 7:
-                    System.out.println("Copying...");
                     tree.copy(tree.root);
+                    System.out.println("Tree Copied");
                     break;
 
                 case 8:
-                    System.out.println("Display Parent With Children");
                     tree.displayParentWithChildren(tree.root);
                     break;
 
                 case 9:
-                    System.out.println("Display Leaf Nodes...");
                     tree.displayLeafNodes(tree.root);
                     break;
 
                 case 10:
-                    System.out.println("Level Wise Display...");
                     tree.levelOrderDisplay(tree.root);
                     break;
+
+                case 11:
+                    System.out.print("Enter key to delete: ");
+                    value = sc.nextInt();
+                    tree.root = tree.deleteNode(tree.root, value);
+                    break;
+
                 case 0:
                     System.out.println("Exiting...");
                     break;
 
                 default:
-                    System.out.println("Invalid Input! Try Again.");
+                    System.out.println("Invalid choice");
             }
         } while (choice != 0);
 
