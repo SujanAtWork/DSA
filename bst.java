@@ -85,10 +85,10 @@ class BST {
 
         if (root.left != null || root.right != null) {
             System.out.println("Parent = " + root.data);
-            System.out.println("Left Child = " + 
-                (root.left != null ? root.left.data : "null"));
-            System.out.println("Right Child = " + 
-                (root.right != null ? root.right.data : "null"));
+            System.out.println("Left Child = " +
+                    (root.left != null ? root.left.data : "null"));
+            System.out.println("Right Child = " +
+                    (root.right != null ? root.right.data : "null"));
         }
 
         displayParentWithChildren(root.left);
@@ -145,7 +145,7 @@ class BST {
 
         // Case 1 & 2: 0 or 1 child
         if (ptr.left == null || ptr.right == null) {
-            Node child = (ptr.left != null) ? ptr.left : ptr.right;
+            Node child = (ptr.left !a= null) ? ptr.left : ptr.right;
 
             if (parent == null) return child;
 
